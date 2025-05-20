@@ -1,21 +1,28 @@
-import { View, Text, StyleSheet, FlatList, ImageBackground, Image, ScrollView } from 'react-native';
-import { useState } from 'react';
+import { View, Text, StyleSheet, FlatList, ImageBackground, Image, ScrollView, Button } from 'react-native';
+import { useEffect, useState } from 'react';
 import { SafeAreaView, SafeAreaProvider } from 'react-native-safe-area-context';
 import CardProduto from '../componentes/cardproduto';
+import { db } from '../controller';
+import { collection, getDocs } from 'firebase/firestore';
 
-export default function Produto() {
-    const [produtos, setProdutos] = useState([
-        { id: 1, nome: 'Macarrão', valor: 2.00, imagem: 'https://forbes.com.br/wp-content/uploads/2022/01/macarrao_coluna_Carla_Bolla_22jan21_IvanSavini_Guettymages.jpg' },
-        { id: 2, nome: 'Banana', valor: 10.00, imagem: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQHlL6yoi89pGz-08CupN6qSa8NYH1CV5qxvA&s' },
-        { id: 3, nome: 'Abacaxi', valor: 5.00, imagem: 'https://cloudfront-us-east-1.images.arcpublishing.com/estadao/GEUVV5EDH5FUVEQJ6YYTV3JERA.jpeg' },
-        { id: 4, nome: 'Pão', valor: 1.00, imagem: 'https://guiadacozinha.com.br/wp-content/uploads/2018/10/paofrancesfolhado.jpg' },
-        { id: 5, nome: 'Café', valor: 3.00, imagem: 'https://baggiocafe.com.br/cdn/shop/articles/Tipos_de_graos_de_cafe_1.jpg?crop=center&height=1200&v=1708516699&width=1200' },
-        { id: 6, nome: 'Cerveja', valor: 8.00, imagem: 'https://media.istockphoto.com/id/519728153/pt/foto/caneca-de-cerveja.jpg?s=612x612&w=0&k=20&c=IGLA7eoqkl07gR74Jt3kZ7TDlUq1GTkg_9ys8ZU-vro=' },
-        { id: 7, nome: 'Refrigerante', valor: 5.00, imagem: 'https://fortatacadista.vteximg.com.br/arquivos/ids/299392-1000-1000/2301822_7894900027013_BEB-REFRIG.COCA-COLA-2L-PET..jpg?v=637764859239570000' },
-        { id: 8, nome: 'Pão de queijo', valor: 4.00, imagem: 'https://amopaocaseiro.com.br/wp-content/uploads/2022/08/yt-069_pao-de-queijo_receita.jpg' },
-        { id: 9, nome: 'Bolo', valor: 6.00, imagem: 'https://d1uz88p17r663j.cloudfront.net/original/8fee36bf950557ff9f896b9104f36907_bolo-vulcao-brigadeiro-receitas-nestle.jpg' },
-        { id: 10, nome: 'Coxinha', valor: 7.00, imagem: 'https://panattos.com.br/uploads/produtos/2017/03/coxinha-de-frango-com-requeijao-mini-congelada.jpg' },
-    ]);
+export default function Produto({navigation}) {
+    const [produtos, setProdutos] = useState([]);
+
+    useEffect(() => {
+        async function carregarProdutos() {
+            try {
+                const querySnapshot = await getDocs(collection(db, "produtos"));
+                const lista = [];
+                querySnapshot.forEach((doc) => {
+                    lista.push({ id: doc.id, ...doc.data() });
+                });
+                setProdutos(lista);
+            } catch (error) {
+                console.log("Erro ao buscar produtos: ", error);
+            }
+        }
+        carregarProdutos();
+    }, []);
 
     return (
         <SafeAreaProvider>
@@ -32,15 +39,22 @@ export default function Produto() {
                                 data={produtos}
                                 renderItem={({ item }) => (
                                     <CardProduto
-                                    id = {item.id}
-                                    nome = {item.nome}
-                                    valor = {item.valor}
-                                    imagem = {item.imagem}
+                                        nome={item.nome}
+                                        valor={item.valor}
+                                        imagem={item.imagem}
                                     />
                                 )}
                                 keyExtractor={(item) => item.id.toString()}
                                 contentContainerStyle={styles.flatListContent}
                             />
+                            <View style={styles.registerButtonContainer}>
+                                <Text style={styles.registerText}>Deseja Cadastrar um Produto?</Text>
+                                <Button
+                                    title="Ir Para Cadastro de Produtos"
+                                    color={'blue'}
+                                    onPress={() => navigation.navigate('CadastroProduto')}
+                                />
+                            </View>
                         </ImageBackground>
                     </View>
                 </ScrollView>
@@ -94,6 +108,14 @@ const styles = StyleSheet.create({
         height: 100,
         borderRadius: 10,
         marginTop: 5,
+    },
+    registerButtonContainer: {
+        alignItems: 'center',
+        marginTop: 30,
+    },
+    registerText: {
+        fontSize: 16,
+        marginBottom: 10,
     },
 });
 

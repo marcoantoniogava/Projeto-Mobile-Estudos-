@@ -8,6 +8,8 @@ import Login from './Screens/login';
 import Feed from './Screens/feed';
 import Count from './Screens/count';
 import Produto from './Screens/produto';
+import Cadastro from './Screens/cadastro';
+import Cadproduto from './Screens/cadastroproduto';
 
 
 function BottomTab() {
@@ -28,6 +30,8 @@ export default function App() {
     <NavigationContainer>
       <Stack.Navigator>
         <Stack.Screen name="TelaLogin" component={Login} />
+        <Stack.Screen name="Cadastro" component={Cadastro} />
+        <Stack.Screen name="CadastroProduto" component={Cadproduto} />
         <Stack.Screen options={{headerShown:false}} name='Home' component={BottomTab} />
       </Stack.Navigator>
     </NavigationContainer>
