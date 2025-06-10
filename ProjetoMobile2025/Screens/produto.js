@@ -4,9 +4,11 @@ import { SafeAreaView, SafeAreaProvider } from 'react-native-safe-area-context';
 import CardProduto from '../componentes/cardproduto';
 import { db } from '../controller';
 import { collection, getDocs } from 'firebase/firestore';
+import { useCarrinho } from '../CarrinhoProvider';
 
 export default function Produto({navigation}) {
     const [produtos, setProdutos] = useState([]);
+    const {adicionarProduto} = useCarrinho()
 
     useEffect(() => {
         async function carregarProdutos() {
@@ -42,6 +44,10 @@ export default function Produto({navigation}) {
                                         nome={item.nome}
                                         valor={item.valor}
                                         imagem={item.imagem}
+                                        comprar={()=> {
+                                            adicionarProduto(item);
+                                            navigation.navigate('Carrinho');
+                                        }}
                                     />
                                 )}
                                 keyExtractor={(item) => item.id.toString()}

@@ -1,8 +1,8 @@
-import { View, Text, StyleSheet, FlatList, ImageBackground, Image, ScrollView } from 'react-native';
+import { View, Text, StyleSheet, FlatList, ImageBackground, Image, Button, ScrollView } from 'react-native';
 import { useState } from 'react';
 import { SafeAreaView, SafeAreaProvider } from 'react-native-safe-area-context';
 
-export default function CardProduto({id, nome, valor, imagem}) {
+export default function CardProduto({id, nome, valor, imagem, comprar}) {
 
     return (
         <SafeAreaProvider>
@@ -11,6 +11,7 @@ export default function CardProduto({id, nome, valor, imagem}) {
                     <Image style={styles.img} source={{uri: imagem}}></Image>
                     <Text style={styles.txt2}>{id}</Text>
                     <Text style={styles.txt2}>{nome} - R$: {valor.toFixed(2)}</Text>
+                    <Button title="Comprar" onPress={comprar} style={styles.btn} />
                 </View>
             </SafeAreaView>
         </SafeAreaProvider>
